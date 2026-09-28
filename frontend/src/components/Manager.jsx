@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
-
 const Manager = () => {
     const [form, setForm] = useState({ site: "", username: "", password: "" });
     const [passwordArray, setPasswordArray] = useState([]);
@@ -20,7 +19,6 @@ const Manager = () => {
 
     useEffect(() => {
         getPasswords();
-
     }, [])
 
     const showPassword = () => {
@@ -35,17 +33,37 @@ const Manager = () => {
 
     const savePassword = async () => {
         if (form.site.length > 3 && form.username.length > 3 && form.password.length >= 8) {
-            //If any such id exist in the database delete it 
-            await fetch("https://vaultix-mongo.vercel.app", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: form.id }) })
 
+            if (form.id) {
+                await fetch("https://vaultix-mongo.vercel.app", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ id: form.id })
+                });
+            }
 
-            const newPassword = { ...form, id: uuidv4() };
-            const updatedPasswords = [...passwordArray, newPassword];
-            setPasswordArray(updatedPasswords);
-            await fetch("https://vaultix-mongo.vercel.app", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, id: uuidv4() }) })
-            // localStorage.setItem("passwords", JSON.stringify(updatedPasswords));
-            // console.log(updatedPasswords);
-            setForm({ site: "", username: "", password: "" });
+            const newPassword = {
+                ...form,
+                id: uuidv4()
+            };
+
+            await fetch("https://vaultix-mongo.vercel.app", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newPassword)
+            });
+
+            setPasswordArray([...passwordArray, newPassword]);
+
+            setForm({
+                site: "",
+                username: "",
+                password: ""
+            });
 
             toast.success('Password saved in Vaultix!🔐', {
                 position: "top-left",
@@ -58,6 +76,7 @@ const Manager = () => {
                 theme: "colored",
                 transition: Bounce,
             });
+
         } else {
             toast("Error : Information not Saved Enter Full information please!")
         }
@@ -65,11 +84,19 @@ const Manager = () => {
 
     const deletePassword = async (id) => {
         console.log(`Deleting Password with id ${id}`);
+
         let del = confirm("Do you really want to delete this password?")
+
         if (del) {
             setPasswordArray(passwordArray.filter(item => item.id !== id));
-            // localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id)));
-            let res = await fetch("https://vaultix-mongo.vercel.app", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
+
+            await fetch("https://vaultix-mongo.vercel.app", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id })
+            });
 
             toast.success('Password removed from Vaultix!🔐', {
                 position: "top-left",
@@ -86,9 +113,15 @@ const Manager = () => {
     }
 
     const editPassword = (id) => {
-        console.log(`Edit Password with id ${id}`)
-        setForm({ ...passwordArray.filter(item => item.id === id)[0], id: id });
-        setPasswordArray(passwordArray.filter(item => item.id !== id));
+        console.log(`Edit Password with id ${id}`);
+
+        const passwordToEdit = passwordArray.find(item => item.id === id);
+
+        setForm(passwordToEdit);
+
+        setPasswordArray(
+            passwordArray.filter(item => item.id !== id)
+        );
     }
 
     const handleChange = (e) => {
@@ -131,7 +164,7 @@ const Manager = () => {
                 <div className="absolute left-1/2 top-0 -z-10 -translate-x-1/2 rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div>
             </div>
 
-            <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 md:px-8  sm:py-8">
+            <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 md:px-8 sm:py-8">
 
                 <h1 className="text-3xl sm:text-4xl font-bold text-center py-6">
                     <span className="text-green-500"> / &lt;</span>
@@ -143,7 +176,6 @@ const Manager = () => {
                     Your Own Password Manager
                 </p>
 
-                {/* Form */}
                 <div className="text-white flex flex-col gap-5 sm:gap-8 p-2 sm:p-4 items-center">
 
                     <input
@@ -291,7 +323,6 @@ const Manager = () => {
 
                                                 </td>
 
-
                                                 <td className="py-2 px-2 sm:px-3 border border-white text-center">
 
                                                     <div className="flex items-center justify-center gap-2 min-w-max">
@@ -323,6 +354,7 @@ const Manager = () => {
                                                 </td>
 
                                                 <td className="py-2 px-2 sm:px-3 border border-white text-center">
+
                                                     <div className="flex items-center justify-center gap-2 min-w-max">
 
                                                         <span className="max-w-[180px] truncate">
@@ -343,6 +375,7 @@ const Manager = () => {
                                                         </div>
 
                                                     </div>
+
                                                 </td>
 
                                                 <td className="py-2 px-2 sm:px-3 border border-white text-center">
