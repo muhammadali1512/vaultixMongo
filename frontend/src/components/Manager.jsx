@@ -12,7 +12,7 @@ const Manager = () => {
     const refPassword = useRef();
 
     const getPasswords = async () => {
-        let req = await fetch("http://localhost:3000");
+        let req = await fetch("https://vaultix-mongo.vercel.app");
         let passwords = await req.json();
         setPasswordArray(passwords);
         console.log(passwords);
@@ -36,13 +36,13 @@ const Manager = () => {
     const savePassword = async () => {
         if (form.site.length > 3 && form.username.length > 3 && form.password.length >= 8) {
             //If any such id exist in the database delete it 
-            await fetch("http://localhost:3000", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: form.id }) })
+            await fetch("https://vaultix-mongo.vercel.app", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: form.id }) })
 
 
             const newPassword = { ...form, id: uuidv4() };
             const updatedPasswords = [...passwordArray, newPassword];
             setPasswordArray(updatedPasswords);
-            await fetch("http://localhost:3000", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, id: uuidv4() }) })
+            await fetch("https://vaultix-mongo.vercel.app", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, id: uuidv4() }) })
             // localStorage.setItem("passwords", JSON.stringify(updatedPasswords));
             // console.log(updatedPasswords);
             setForm({ site: "", username: "", password: "" });
@@ -69,7 +69,7 @@ const Manager = () => {
         if (del) {
             setPasswordArray(passwordArray.filter(item => item.id !== id));
             // localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id)));
-            let res = await fetch("http://localhost:3000", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
+            let res = await fetch("https://vaultix-mongo.vercel.app", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
 
             toast.success('Password removed from Vaultix!🔐', {
                 position: "top-left",
