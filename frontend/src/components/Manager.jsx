@@ -32,7 +32,22 @@ const Manager = () => {
     }
 
     const savePassword = async () => {
-        if (form.site.length > 3 && form.username.length > 3 && form.password.length >= 8) {
+        if (form.password.length < 8) {
+            toast.error('Password must be at least 8 characters! 🔐', {
+                position: "top-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+            });
+            return;
+        }
+
+        if (form.site.length > 3 && form.username.length > 3) {
 
             if (form.id) {
                 await fetch("https://vaultix-mongo.vercel.app", {
@@ -78,7 +93,12 @@ const Manager = () => {
             });
 
         } else {
-            toast("Error : Information not Saved Enter Full information please!")
+            toast.error('Please enter complete information! ⚠️', {
+                position: "top-left",
+                autoClose: 5000,
+                theme: "colored",
+                transition: Bounce,
+            });
         }
     }
 
