@@ -47,40 +47,8 @@ const Manager = () => {
             return;
         }
 
-        if (form.site.length > 3 && form.username.length > 3) {
-
-            if (form.id) {
-                await fetch("https://vaultix-mongo.vercel.app", {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ id: form.id })
-                });
-            }
-
-            const newPassword = {
-                ...form,
-                id: uuidv4()
-            };
-
-            await fetch("https://vaultix-mongo.vercel.app", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newPassword)
-            });
-
-            setPasswordArray([...passwordArray, newPassword]);
-
-            setForm({
-                site: "",
-                username: "",
-                password: ""
-            });
-
-            toast.success('Password saved in Vaultix!🔐', {
+        if (form.username.length <= 3) {
+            toast.error('Username must be more than 3 characters! 👤', {
                 position: "top-left",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -91,15 +59,66 @@ const Manager = () => {
                 theme: "colored",
                 transition: Bounce,
             });
+            return;
+        }
 
-        } else {
-            toast.error('Please enter complete information! ⚠️', {
+        if (form.site.length <= 3) {
+            toast.error('Website URL must be more than 3 characters! 🌐', {
                 position: "top-left",
                 autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
                 theme: "colored",
                 transition: Bounce,
             });
+            return;
         }
+
+        if (form.id) {
+            await fetch("https://vaultix-mongo.vercel.app", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: form.id })
+            });
+        }
+
+        const newPassword = {
+            ...form,
+            id: uuidv4()
+        };
+
+        await fetch("https://vaultix-mongo.vercel.app", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newPassword)
+        });
+
+        setPasswordArray([...passwordArray, newPassword]);
+
+        setForm({
+            site: "",
+            username: "",
+            password: ""
+        });
+
+        toast.success('Password saved in Vaultix! 🔐', {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+        });
     }
 
     const deletePassword = async (id) => {
@@ -118,7 +137,7 @@ const Manager = () => {
                 body: JSON.stringify({ id })
             });
 
-            toast.success('Password removed from Vaultix!🔐', {
+            toast.success('Password removed from Vaultix! 🔐', {
                 position: "top-left",
                 autoClose: 5000,
                 hideProgressBar: false,
